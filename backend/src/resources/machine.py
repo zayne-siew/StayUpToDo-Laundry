@@ -2,9 +2,9 @@
 from flask import request
 from flask_restful import Resource # type: ignore
 
-from ..types import MachineStatus
-from ..models import Machine, TelegramMessage
-from ..storage import storage
+from src.types import MachineStatus
+from src.models import Machine, TelegramMessage
+from src.storage import storage
 
 class MachineListResource(Resource):
     """Resource for machine collection"""

@@ -1,5 +1,5 @@
 """Type definitions for the StayUpToDo Laundry backend."""
-from .enums import MachineStatus, MachineType
+from src.types.enums import MachineStatus, MachineType
 
 __all__ = ['MachineStatus', 'MachineType']
 

@@ -21,27 +21,27 @@ A laundry machine status dashboard with:
   - 🔴 Red = In Use / Out of Order
 - **Interactive machine cards** - tap to see details
 
-## Run the Backend (Optional)
+## Run the Backend
 
 ```bash
-cd backend/src
+cd backend
 pip install -r requirements.txt
-python app.py
+python3 -m src.app
 ```
 
-Backend will run on `http://localhost:5000`
+Backend will run on `http://localhost:8000`
 
 ## Initialize Backend Data
 
 ```bash
-# Initialize 72 machines (12 washers + 12 dryers per block × 3 blocks)
-curl -X POST http://localhost:5000/api/machines/initialize
+# Initialize all machines
+curl -X POST http://localhost:8000/api/machines/initialize
 
 # Get all machines
-curl http://localhost:5000/api/machines
+curl http://localhost:8000/api/machines
 
 # Get machines by block
-curl http://localhost:5000/api/machines?block=55
+curl http://localhost:8000/api/machines?block=55
 ```
 
 ## Project Features

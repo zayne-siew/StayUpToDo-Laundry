@@ -3,7 +3,7 @@ from flask import Flask
 from flask_restful import Api  # type: ignore
 from flask_cors import CORS  # type: ignore
 
-from .resources import (
+from src.resources import (
     MachineListResource,
     MachineResource,
     MachineStatusResource,
@@ -12,6 +12,8 @@ from .resources import (
     MachineHistoryResource,
     MachineInitializeResource
 )
+from src.storage import storage
+from src.types import MachineStatus
 
 def create_app():
     """Create and configure the Flask application"""
@@ -37,8 +39,44 @@ def create_app():
     api.add_resource(MachineHistoryResource, '/machines/<string:machine_id>/history')  # pyright: ignore[reportUnknownMemberType]
     api.add_resource(MachineInitializeResource, '/machines/initialize')  # pyright: ignore[reportUnknownMemberType]
 
+    # Initialize default machines on app startup
+    initialize_default_machines()
+
     return app
+
+def initialize_default_machines():
+    """Initialize default machines with sample data for all three blocks"""
+    # Initialize all machines first
+    storage.initialize_default_machines()
+    
+    # Set some sample statuses for demonstration
+    sample_data: list[tuple[str, MachineStatus, int | None]] = [  # type: ignore
+        ('55W2', MachineStatus.IN_USE, 165),
+        ('55W3', MachineStatus.PAID_FOR, None),
+        ('55W4', MachineStatus.PENDING_UNLOAD, None),
+        ('55W6', MachineStatus.IN_USE, 300),
+        ('55W9', MachineStatus.IN_USE, 120),
+        ('55W11', MachineStatus.PAID_FOR, None),
+        ('55D2', MachineStatus.IN_USE, 420),
+        ('55D4', MachineStatus.OUT_OF_ORDER, None),
+        ('57W2', MachineStatus.IN_USE, 90),
+        ('57W5', MachineStatus.PAID_FOR, None),
+        ('57W8', MachineStatus.IN_USE, 200),
+        ('57D3', MachineStatus.IN_USE, 350),
+        ('59D1', MachineStatus.PAID_FOR, None),
+    ]
+    
+    for machine_id, status, remaining_time in sample_data:
+        machine = storage.get_by_id(machine_id)
+        if machine:
+            machine.update_status(status, user="admin")
+            if remaining_time:
+                machine.remaining_time_seconds = remaining_time
+            storage.update(machine)
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print("Starting StayUpToDo-Laundry Backend Server...")
+    print("Server running at: http://localhost:8000")
+    print("API endpoints available at: http://localhost:8000/api/machines")
+    app.run(debug=True, host='0.0.0.0', port=8000)

@@ -11,10 +11,10 @@ pip install -r requirements.txt
 
 2. Run the server:
 ```bash
-python app.py
+python3 src/app.py
 ```
 
-The server will run on `http://localhost:5000`
+The server will run on `http://localhost:8000`
 
 ## API Endpoints
 
@@ -69,18 +69,18 @@ The server will run on `http://localhost:5000`
 
 ```bash
 # Initialize machines
-curl -X POST http://localhost:5000/api/machines/initialize
+curl -X POST http://localhost:8000/api/machines/initialize
 
 # Get all machines
-curl http://localhost:5000/api/machines
+curl http://localhost:8000/api/machines
 
 # Update machine status
-curl -X PUT http://localhost:5000/api/machines/W1/status \
+curl -X PUT http://localhost:8000/api/machines/W1/status \
   -H "Content-Type: application/json" \
   -d '{"status": "inUse", "user": "john", "remaining_time_seconds": 1800}'
 
 # Get available machines
-curl http://localhost:5000/api/machines?status=available
+curl http://localhost:8000/api/machines?status=available
 ```
 
 ## Machine Status Types

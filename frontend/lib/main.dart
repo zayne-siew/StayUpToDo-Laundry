@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:stay_up_to_do_laundry/screens/home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  // Load environment variables from .env.local
+  await dotenv.load(fileName: ".env.local");
   runApp(const MyApp());
 }
 

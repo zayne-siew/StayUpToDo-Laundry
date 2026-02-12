@@ -1,6 +1,6 @@
 """In-memory storage for machines (can be replaced with database)"""
-from .types import MachineStatus
-from .models import Machine
+from src.types import MachineStatus
+from src.models import Machine
 
 class MachineStorage:
     """In-memory storage for machines"""
@@ -91,6 +91,5 @@ class MachineStorage:
         return machines
 
 
-if __name__ == '__main__':
-    # Global storage instance
-    storage = MachineStorage()
+# Global storage instance
+storage = MachineStorage()

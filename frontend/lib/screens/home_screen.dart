@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stay_up_to_do_laundry/widgets/machine.dart';
+import 'package:stay_up_to_do_laundry/services/machine.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -12,275 +14,50 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Sample machines for demonstration
-  late List<MachineModel> machines;
+  // Machines from backend
+  List<MachineModel> machines = [];
+
+  // Loading state
+  bool isLoading = true;
+  String? errorMessage;
 
   // Sample user data
-  final String userName = 'John Doe';
+  final String userName = 'Zayne Siew';
+  final String telegramUsername =
+      '@${dotenv.env['TELEGRAM_USERNAME'] ?? 'zayne-siew'}';
 
   // Selected block number
   int selectedBlock = 55;
 
+  // Machine service
+  final MachineService machineService = MachineService(
+    baseUrl: 'http://localhost:8000/api',
+  );
+
   @override
   void initState() {
     super.initState();
-    _initializeMachines();
+    _loadMachines();
   }
 
-  void _initializeMachines() {
-    machines = [
-      // Block 55 - 11 Washers and 6 Dryers
-      MachineModel(
-        id: '55W1',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '55W2',
-        blockNumber: 55,
-        status: MachineStatus.inUse,
-        remainingTimeSeconds: 165,
-      ),
-      MachineModel(id: '55W3', blockNumber: 55, status: MachineStatus.paidFor),
-      MachineModel(
-        id: '55W4',
-        blockNumber: 55,
-        status: MachineStatus.pendingUnload,
-      ),
-      MachineModel(
-        id: '55W5',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '55W6',
-        blockNumber: 55,
-        status: MachineStatus.inUse,
-        remainingTimeSeconds: 300,
-      ),
-      MachineModel(
-        id: '55W7',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '55W8',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '55W9',
-        blockNumber: 55,
-        status: MachineStatus.inUse,
-        remainingTimeSeconds: 120,
-      ),
-      MachineModel(
-        id: '55W10',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(id: '55W11', blockNumber: 55, status: MachineStatus.paidFor),
-      MachineModel(
-        id: '55D1',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '55D2',
-        blockNumber: 55,
-        status: MachineStatus.inUse,
-        remainingTimeSeconds: 420,
-      ),
-      MachineModel(
-        id: '55D3',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '55D4',
-        blockNumber: 55,
-        status: MachineStatus.outOfOrder,
-      ),
-      MachineModel(
-        id: '55D5',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '55D6',
-        blockNumber: 55,
-        status: MachineStatus.available,
-      ),
+  Future<void> _loadMachines() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
 
-      // Block 57 - Similar layout
-      MachineModel(
-        id: '57W1',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57W2',
-        blockNumber: 57,
-        status: MachineStatus.inUse,
-        remainingTimeSeconds: 90,
-      ),
-      MachineModel(
-        id: '57W3',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57W4',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(id: '57W5', blockNumber: 57, status: MachineStatus.paidFor),
-      MachineModel(
-        id: '57W6',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57W7',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57W8',
-        blockNumber: 57,
-        status: MachineStatus.inUse,
-        remainingTimeSeconds: 200,
-      ),
-      MachineModel(
-        id: '57W9',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57W10',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57W11',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57D1',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57D2',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57D3',
-        blockNumber: 57,
-        status: MachineStatus.inUse,
-        remainingTimeSeconds: 350,
-      ),
-      MachineModel(
-        id: '57D4',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57D5',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '57D6',
-        blockNumber: 57,
-        status: MachineStatus.available,
-      ),
-
-      // Block 59 - Similar layout
-      MachineModel(
-        id: '59W1',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W2',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W3',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W4',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W5',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W6',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W7',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W8',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W9',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W10',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59W11',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(id: '59D1', blockNumber: 59, status: MachineStatus.paidFor),
-      MachineModel(
-        id: '59D2',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59D3',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59D4',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59D5',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-      MachineModel(
-        id: '59D6',
-        blockNumber: 59,
-        status: MachineStatus.available,
-      ),
-    ];
+    try {
+      final fetchedMachines = await machineService.getAllMachines();
+      setState(() {
+        machines = fetchedMachines;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to load machines: $e';
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -427,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '@thejohndoe',
+                      telegramUsername,
                       style: GoogleFonts.interTight(
                         fontSize: 11,
                         color: Colors.grey,
@@ -469,7 +246,32 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: _buildRoomLayout(selectedBlock),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage != null
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    errorMessage!,
+                    style: GoogleFonts.interTight(
+                      fontSize: 16,
+                      color: Colors.red,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadMachines,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            )
+          : _buildRoomLayout(selectedBlock),
     );
   }
 

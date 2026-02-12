@@ -7,7 +7,7 @@ class MachineService {
   final String baseUrl;
   final http.Client? client;
 
-  MachineService({this.baseUrl = 'http://localhost:5000/api', this.client});
+  MachineService({this.baseUrl = 'http://localhost:8000/api', this.client});
 
   http.Client get _client => client ?? http.Client();
 

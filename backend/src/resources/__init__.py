@@ -1,5 +1,5 @@
 """API resources for Flask-RESTful"""
-from .machine import (
+from src.resources.machine import (
     MachineListResource,
     MachineResource,
     MachineStatusResource,
