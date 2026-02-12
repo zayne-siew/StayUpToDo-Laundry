@@ -1,0 +1,1 @@
+"""StayUpToDo-Laundry Backend API"""
