@@ -78,7 +78,7 @@ class MachineModel {
   final int blockNumber; // Must be one of: 55, 57, 59
   MachineStatus status;
   List<StatusHistoryEntry> statusHistory;
-  int? remainingTimeSeconds; // Only used when status is inUse
+  String? estimatedFinishTime; // ISO 8601 UTC timestamp for inUse machines
   TelegramMessage? telegramMessage;
 
   static const List<int> validBlocks = [55, 57, 59];
@@ -88,7 +88,7 @@ class MachineModel {
     required this.blockNumber,
     required this.status,
     this.statusHistory = const [],
-    this.remainingTimeSeconds,
+    this.estimatedFinishTime,
     this.telegramMessage,
   }) {
     if (!validBlocks.contains(blockNumber)) {
@@ -114,12 +114,26 @@ class MachineModel {
     throw ArgumentError('Invalid machine ID format: $id');
   }
 
+  /// Calculate remaining time in seconds from estimated finish time
+  int? get remainingTimeSeconds {
+    if (estimatedFinishTime == null) return null;
+    try {
+      final finishTime = DateTime.parse(estimatedFinishTime!);
+      final now = DateTime.now().toUtc();
+      final difference = finishTime.difference(now).inSeconds;
+      return difference > 0 ? difference : 0;
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Get formatted remaining time as MM:SS
   String get formattedRemainingTime {
-    if (remainingTimeSeconds == null) return '';
-    final minutes = remainingTimeSeconds! ~/ 60;
-    final seconds = remainingTimeSeconds! % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    final seconds = remainingTimeSeconds;
+    if (seconds == null) return '';
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
   /// Get formatted status as a proper string
@@ -185,9 +199,9 @@ class MachineModel {
     );
   }
 
-  /// Update remaining time (for in-use machines)
-  void updateRemainingTime(int seconds) {
-    remainingTimeSeconds = seconds;
+  /// Update estimated finish time (for in-use machines)
+  void updateEstimatedFinishTime(String? finishTime) {
+    estimatedFinishTime = finishTime;
   }
 
   /// Create from JSON (for API response parsing)
@@ -203,7 +217,7 @@ class MachineModel {
               ?.map((e) => StatusHistoryEntry.fromJson(e))
               .toList() ??
           [],
-      remainingTimeSeconds: json['remaining_time_seconds'],
+      estimatedFinishTime: json['estimated_finish_time'],
       telegramMessage: json['telegram_message'] != null
           ? TelegramMessage.fromJson(json['telegram_message'])
           : null,
@@ -217,7 +231,7 @@ class MachineModel {
       'block_number': blockNumber,
       'status': status.toString().split('.').last,
       'status_history': statusHistory.map((e) => e.toJson()).toList(),
-      'remaining_time_seconds': remainingTimeSeconds,
+      'estimated_finish_time': estimatedFinishTime,
       'telegram_message': telegramMessage?.toJson(),
     };
   }
@@ -228,7 +242,7 @@ class MachineModel {
     int? blockNumber,
     MachineStatus? status,
     List<StatusHistoryEntry>? statusHistory,
-    int? remainingTimeSeconds,
+    String? estimatedFinishTime,
     TelegramMessage? telegramMessage,
   }) {
     return MachineModel(
@@ -236,7 +250,7 @@ class MachineModel {
       blockNumber: blockNumber ?? this.blockNumber,
       status: status ?? this.status,
       statusHistory: statusHistory ?? this.statusHistory,
-      remainingTimeSeconds: remainingTimeSeconds ?? this.remainingTimeSeconds,
+      estimatedFinishTime: estimatedFinishTime ?? this.estimatedFinishTime,
       telegramMessage: telegramMessage ?? this.telegramMessage,
     );
   }

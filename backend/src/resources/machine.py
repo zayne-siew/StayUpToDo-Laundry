@@ -1,4 +1,5 @@
 """Flask-RESTful resources for machine endpoints"""
+from datetime import datetime, timedelta
 from flask import request
 from flask_restful import Resource # type: ignore
 
@@ -93,15 +94,20 @@ class MachineStatusResource(Resource):
             return {'error': 'Status and user are required'}, 400
         
         try:
+            prev_status = machine.status
             new_status = MachineStatus(data['status'])
             user = data['user']
             
             machine.update_status(new_status, user)
             
-            # Update remaining time if provided
-            if 'remaining_time_seconds' in data:
-                machine.remaining_time_seconds = data['remaining_time_seconds']
-            
+            # Update estimated finish time
+            if prev_status == MachineStatus.IN_USE and new_status != MachineStatus.IN_USE:
+                machine.estimated_finish_time = None
+            elif 'estimated_finish_time' in data:
+                machine.estimated_finish_time = data['estimated_finish_time']
+            elif new_status == MachineStatus.IN_USE:
+                machine.estimated_finish_time = (datetime.now() + timedelta(seconds=Machine.MAX_RUN_TIME_SECONDS)).isoformat()
+
             storage.update(machine)
             return machine.to_dict(), 200
         except ValueError as e:
@@ -109,10 +115,10 @@ class MachineStatusResource(Resource):
 
 
 class MachineTimeResource(Resource):
-    """Resource for updating machine remaining time"""
+    """Resource for updating machine estimated finish time"""
     
     def patch(self, machine_id: str):
-        """Update remaining time"""
+        """Update estimated finish time"""
         machine = storage.get_by_id(machine_id)
         
         if not machine:
@@ -120,15 +126,15 @@ class MachineTimeResource(Resource):
         
         data = request.get_json()
         
-        if not data or 'remaining_time_seconds' not in data:
-            return {'error': 'remaining_time_seconds is required'}, 400
+        if not data or 'estimated_finish_time' not in data:
+            return {'error': 'estimated_finish_time is required'}, 400
         
         try:
-            machine.remaining_time_seconds = int(data['remaining_time_seconds'])
+            machine.estimated_finish_time = data['estimated_finish_time']
             storage.update(machine)
             return machine.to_dict(), 200
-        except (ValueError, TypeError):
-            return {'error': 'Invalid time value'}, 400
+        except (ValueError, TypeError) as e:
+            return {'error': f'Invalid time value: {str(e)}'}, 400
 
 
 class MachineTelegramResource(Resource):

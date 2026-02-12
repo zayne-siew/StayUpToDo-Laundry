@@ -74,7 +74,7 @@ class MachineService {
     required String machineId,
     required MachineStatus status,
     required String user,
-    int? remainingTimeSeconds,
+    String? estimatedFinishTime,
   }) async {
     try {
       final response = await _client.put(
@@ -83,7 +83,7 @@ class MachineService {
         body: json.encode({
           'status': status.toString().split('.').last,
           'user': user,
-          'remaining_time_seconds': remainingTimeSeconds,
+          'estimated_finish_time': estimatedFinishTime,
         }),
       );
 
@@ -99,16 +99,16 @@ class MachineService {
     }
   }
 
-  /// Update machine remaining time
-  Future<MachineModel> updateRemainingTime({
+  /// Update machine estimated finish time
+  Future<MachineModel> updateEstimatedFinishTime({
     required String machineId,
-    required int seconds,
+    required String finishTime,
   }) async {
     try {
       final response = await _client.patch(
         Uri.parse('$baseUrl/machines/$machineId/time'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'remaining_time_seconds': seconds}),
+        body: json.encode({'estimated_finish_time': finishTime}),
       );
 
       if (response.statusCode == 200) {
@@ -119,7 +119,7 @@ class MachineService {
         throw Exception('Failed to update time: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error updating remaining time: $e');
+      throw Exception('Error updating estimated finish time: $e');
     }
   }
 

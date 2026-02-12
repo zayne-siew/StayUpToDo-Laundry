@@ -11,14 +11,14 @@ class MachineDict(TypedDict):
     block_number: int
     status: str
     status_history: list[StatusHistoryEntryDict]
-    remaining_time_seconds: int | None
+    estimated_finish_time: str | None  # ISO 8601 UTC timestamp
     telegram_message: TelegramMessageDict | None
 
 
 class Machine:
     """Model for laundry machine"""
     _VALID_BLOCKS = {55, 57, 59}
-    _MAX_RUN_TIME_SECONDS = 50 * 60  # 50 minutes in seconds
+    MAX_RUN_TIME_SECONDS = 50 * 60  # 50 minutes in seconds
     
     def __init__(
         self,
@@ -26,7 +26,7 @@ class Machine:
         block_number: int,
         status: MachineStatus = MachineStatus.AVAILABLE,
         status_history: list[StatusHistoryEntry] | None = None,
-        remaining_time_seconds: int | None = None,
+        estimated_finish_time: str | None = None,
         telegram_message: TelegramMessage | None = None
     ):
         if block_number not in self._VALID_BLOCKS:
@@ -36,7 +36,7 @@ class Machine:
         self._block_number = block_number
         self._status = status
         self._status_history = status_history or []
-        self._remaining_time_seconds = remaining_time_seconds
+        self._estimated_finish_time = estimated_finish_time
         self._telegram_message = telegram_message
 
     @property
@@ -48,16 +48,20 @@ class Machine:
         return self._status_history
 
     @property
-    def remaining_time_seconds(self) -> int | None:
-        return self._remaining_time_seconds
+    def estimated_finish_time(self) -> str | None:
+        """Get estimated finish time in ISO 8601 UTC format"""
+        return self._estimated_finish_time
     
-    @remaining_time_seconds.setter
-    def remaining_time_seconds(self, value: int) -> None:
-        if value < 0:
-            raise ValueError("Remaining time cannot be negative")
-        elif value > self._MAX_RUN_TIME_SECONDS:
-            raise ValueError(f"Remaining time cannot exceed {self._MAX_RUN_TIME_SECONDS} seconds")
-        self._remaining_time_seconds = value
+    @estimated_finish_time.setter
+    def estimated_finish_time(self, value: str | None) -> None:
+        """Set estimated finish time. Must be ISO 8601 UTC timestamp or None"""
+        if value is not None:
+            # Validate that it's a valid ISO 8601 timestamp
+            try:
+                datetime.fromisoformat(value.replace('Z', '+00:00'))
+            except (ValueError, AttributeError):
+                raise ValueError(f"Invalid ISO 8601 timestamp: {value}")
+        self._estimated_finish_time = value
 
     @property
     def telegram_message(self) -> TelegramMessage | None:
@@ -112,7 +116,7 @@ class Machine:
             block_number=self._block_number,
             status=self._status.value,
             status_history=[entry.to_dict() for entry in self._status_history],
-            remaining_time_seconds=self._remaining_time_seconds,
+            estimated_finish_time=self._estimated_finish_time,
             telegram_message=self._telegram_message.to_dict() if self._telegram_message else None
         )
 
@@ -127,7 +131,7 @@ class Machine:
                 StatusHistoryEntry.from_dict(entry)
                 for entry in data.get('status_history', [])
             ],
-            remaining_time_seconds=data.get('remaining_time_seconds'),
+            estimated_finish_time=data.get('estimated_finish_time'),
             telegram_message=(
                 None if data['telegram_message'] is None
                 else TelegramMessage.from_dict(data['telegram_message'])

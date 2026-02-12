@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,10 +35,94 @@ class _MyHomePageState extends State<MyHomePage> {
     baseUrl: 'http://localhost:8000/api',
   );
 
+  // Timers for polling and UI updates
+  Timer? _pollTimer;
+  Timer? _uiUpdateTimer;
+
+  // Track machines being updated to prevent duplicate API calls
+  final Set<String> _machinesBeingUpdated = {};
+
   @override
   void initState() {
     super.initState();
     _loadMachines();
+    _startPolling();
+    _startUIUpdateTimer();
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    _uiUpdateTimer?.cancel();
+    super.dispose();
+  }
+
+  /// Start periodic polling of machine states every 10 seconds
+  void _startPolling() {
+    _pollTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _loadMachines();
+    });
+  }
+
+  /// Start UI update timer that triggers rebuild every second
+  /// This ensures countdown timers are updated in real-time
+  void _startUIUpdateTimer() {
+    _uiUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        // Check for machines that have finished and need status update
+        _checkAndUpdateFinishedMachines();
+      });
+    });
+  }
+
+  /// Check for machines that finished running and update their status
+  void _checkAndUpdateFinishedMachines() {
+    for (var machine in machines) {
+      // Only process machines that are currently in use
+      if (machine.status == MachineStatus.inUse) {
+        final remainingSeconds = machine.remainingTimeSeconds;
+
+        // If timer has run out (0 or null from invalid/past time)
+        // and not already being updated
+        if (remainingSeconds != null &&
+            remainingSeconds <= 0 &&
+            !_machinesBeingUpdated.contains(machine.id)) {
+          // Update status to pendingUnload
+          _updateMachineStatusToPendingUnload(machine);
+        }
+      }
+    }
+  }
+
+  /// Update machine status from inUse to pendingUnload
+  Future<void> _updateMachineStatusToPendingUnload(MachineModel machine) async {
+    // Mark as being updated to prevent duplicate calls
+    _machinesBeingUpdated.add(machine.id);
+
+    try {
+      // Call the API to update status
+      await machineService.updateMachineStatus(
+        machineId: machine.id,
+        status: MachineStatus.pendingUnload,
+        user: 'system', // Automatic system update
+      );
+
+      // Update local state immediately
+      setState(() {
+        machine.status = MachineStatus.pendingUnload;
+        machine.estimatedFinishTime = null; // Clear finish time
+      });
+
+      print('Machine ${machine.id} automatically updated to pendingUnload');
+    } catch (e) {
+      print('Failed to update machine ${machine.id} status: $e');
+      // Don't show error to user - polling will sync eventually
+    } finally {
+      // Remove from tracking set after a delay to prevent rapid retries
+      Future.delayed(const Duration(seconds: 5), () {
+        _machinesBeingUpdated.remove(machine.id);
+      });
+    }
   }
 
   Future<void> _loadMachines() async {

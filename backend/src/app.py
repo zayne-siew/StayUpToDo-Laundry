@@ -1,4 +1,5 @@
 """Main Flask application for StayUpToDo-Laundry backend"""
+from datetime import datetime, timezone
 from flask import Flask
 from flask_restful import Api  # type: ignore
 from flask_cors import CORS  # type: ignore
@@ -49,6 +50,12 @@ def initialize_default_machines():
     # Initialize all machines first
     storage.initialize_default_machines()
     
+    # Helper to calculate finish time from seconds
+    def get_finish_time(seconds: int) -> str:
+        """Calculate UTC finish time from seconds"""
+        finish_time = datetime.now(timezone.utc).timestamp() + seconds
+        return datetime.fromtimestamp(finish_time, tz=timezone.utc).isoformat()
+    
     # Set some sample statuses for demonstration
     sample_data: list[tuple[str, MachineStatus, int | None]] = [  # type: ignore
         ('55W2', MachineStatus.IN_USE, 165),
@@ -66,12 +73,12 @@ def initialize_default_machines():
         ('59D1', MachineStatus.PAID_FOR, None),
     ]
     
-    for machine_id, status, remaining_time in sample_data:
+    for machine_id, status, remaining_seconds in sample_data:
         machine = storage.get_by_id(machine_id)
         if machine:
             machine.update_status(status, user="admin")
-            if remaining_time:
-                machine.remaining_time_seconds = remaining_time
+            if remaining_seconds:
+                machine.estimated_finish_time = get_finish_time(remaining_seconds)
             storage.update(machine)
 
 if __name__ == '__main__':
