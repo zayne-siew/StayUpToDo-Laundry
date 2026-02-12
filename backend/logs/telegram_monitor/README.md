@@ -1,0 +1,1 @@
+This folder stores telegram monitoring logs, do not remove.
