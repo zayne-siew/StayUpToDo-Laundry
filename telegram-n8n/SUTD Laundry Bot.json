@@ -1,0 +1,2115 @@
+{
+  "name": "SUTD Laundry Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true,
+          "imageSize": "large"
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ac4013ef-8830-4c73-b29d-7464c6a84f7e",
+      "name": "Telegram Trigger",
+      "webhookId": "694d7037-657b-4fe0-b62e-bf63ad12c465",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/view",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cf5a53da-5a40-4393-9a11-17b3d7ed4b3f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/view"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c7d0911f-fe7c-4b91-b897-27d9e1082d63",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/use",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/use"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "00c40368-5c61-4db3-aac7-c464c1af3ff4",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/finish",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/finish"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d433753a-1241-47dc-8c16-90055fe9ccf2",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/report",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/report"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bd65f4c2-e7fb-45de-8908-bae5b7ba9a31",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "^(view|use|report) Block 5[579]$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "selected block"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7ae34fe9-916f-4176-b8cd-b43e621f31a2",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "^(?:view|use|report) 5[579][WD][1-9][01]?$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": "=selected machine"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0a35a2ed-6c57-49ab-8a3d-ba434e583942",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "^report 5[579][WD][1-9][01]? [a-zA-Z]+$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "report status"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "41f3a40f-16f8-4440-ba56-56bca7be3cfe",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "else"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        -112
+      ],
+      "id": "2d569104-5c0c-4060-85ff-9d051bcf89de",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8830ffdd-c641-4455-9c58-f7510325d4db",
+              "leftValue": "={{ $json.message.from.id }}",
+              "rightValue": 1449802252,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        0
+      ],
+      "id": "3f9112df-31c1-4231-894d-9670bf3d62f0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Sorry, this bot is currently restricted to private use.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        240
+      ],
+      "id": "f0bf9c28-dc99-4250-92b7-305478d5fbe5",
+      "name": "Restrict bot usage",
+      "webhookId": "9dd6ab7d-a2f3-4380-bd4c-b26ea90f43c4",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Sorry, I only recognise official commands. Try typing \"/\" to see which commands are available.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        560
+      ],
+      "id": "de5270c7-db46-4483-a963-66b26c29b461",
+      "name": "Default reply",
+      "webhookId": "4146ae50-49a7-4f5e-bac2-148b00b233bf",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Please select the block:",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(1) }} Block 55",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(1) }} Block 57",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(1) }} Block 59",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {
+          "one_time_keyboard": true
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        -368
+      ],
+      "id": "1dbc729e-1f85-4090-991c-da676b794351",
+      "name": "Choose block number",
+      "webhookId": "c67e0fe0-7879-454a-80b2-d31ee5e1355a",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8",
+          "mode": "list",
+          "cachedResultName": "SUTD Laundry Bot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Machines": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Machines"
+          ],
+          "schema": [
+            {
+              "id": "Machines",
+              "displayName": "Machines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1920,
+        144
+      ],
+      "id": "3c73a419-c66d-42b2-b6de-4050ad2267c4",
+      "name": "Append row in sheet",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "baq6JN98feIF8Ow0",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Please select the washer / dryer:",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W1",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W2",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W3",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W4",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W5",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W6",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W7",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W8",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W9",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W10",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}W11",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}D1",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}D2",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}D3",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}D4",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}D5",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text.slice(0, $json.message.text.indexOf(\" \")) }} {{ $json.message.text.slice(-2) }}D6",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {
+          "one_time_keyboard": true
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "87a33776-3e5b-4021-a374-e137b406144d",
+      "name": "Choose machine",
+      "webhookId": "c67e0fe0-7879-454a-80b2-d31ee5e1355a",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "view",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "b5ca9e79-5274-4af5-bbe3-3283d2d9f087"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "view"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0fded584-cceb-46af-932e-cc0f882ede70",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "use",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "use"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "85d96cd6-d25e-4f27-9920-84093ceeb4bc",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "report",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "report"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        160
+      ],
+      "id": "2a0955c4-6f56-45f1-86bf-385af111e6e4",
+      "name": "Switch1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5960fc02-afd0-4215-83ab-38fb94d91450",
+              "leftValue": "={{ $json.hasField(\"error\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1296,
+        -64
+      ],
+      "id": "efe75fee-f3af-4978-94d1-e34911a26ad7",
+      "name": "Valid status?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        992,
+        -64
+      ],
+      "id": "823053e5-9004-4316-a2cc-30173edb50e0",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "update_id"
+            },
+            {
+              "fieldToAggregate": "message"
+            },
+            {
+              "fieldToAggregate": "id"
+            },
+            {
+              "fieldToAggregate": "block_number"
+            },
+            {
+              "fieldToAggregate": "status"
+            },
+            {
+              "fieldToAggregate": "status_history"
+            },
+            {
+              "fieldToAggregate": "remaining_time_seconds"
+            },
+            {
+              "fieldToAggregate": "telegram_message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -64
+      ],
+      "id": "7de243fb-37f6-4df5-9ec6-af7355d1e12b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message[0].chat.id }}",
+        "text": "=Status: {{ $json.status }}{{ \"\\n\" }}{{ $if($json.remaining_time_seconds.length > 0 && $json.remaining_time_seconds[0] !== null, \"\\nRemaining time: \", \"\") }}{{ $if($json.remaining_time_seconds.length > 0 && $json.remaining_time_seconds[0] !== null, $json.remaining_time_seconds[0], \"\") }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        -80
+      ],
+      "id": "41b90347-8b39-47f1-bc0c-b7f7ac7338dd",
+      "name": "Send status",
+      "webhookId": "2633798c-9ace-4067-bca6-7d2ce05ab089",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Sorry, an error occurred. Please try again later.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1936,
+        560
+      ],
+      "id": "727c65ef-85f1-4338-b864-eb6ad78cd6a8",
+      "name": "Error message",
+      "webhookId": "0b7676d7-433f-46db-9f3c-bf86b5c9a53f",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://0be7-103-24-77-51.ngrok-free.app/api/machines/{{ $json.message.text.slice($json.message.text.indexOf(\" \") + 1) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        816,
+        -32
+      ],
+      "id": "b68d5c3a-0d8f-4528-a7cf-0618fff5b727",
+      "name": "GET /api/machines/<machine_id>",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput",
+      "notes": "Remember to get the publicly exposed URL from ngrok (ngrok http <PORT>)"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://0be7-103-24-77-51.ngrok-free.app/api/machines/{{ $json.message.text.slice($json.message.text.indexOf(\" \") + 1, $json.message.text.lastIndexOf(\" \")) }}/status",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "={{ $json.message.text.slice($json.message.text.lastIndexOf(\" \") + 1) }}"
+            },
+            {
+              "name": "user",
+              "value": "={{ $json.message.from.username }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        592,
+        400
+      ],
+      "id": "4ab14188-5975-4119-b910-e9a80b8e8e8b",
+      "name": "PUT /api/machines/<machine_id>/status",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput",
+      "notes": "Remember to get the publicly exposed URL from ngrok (ngrok http <PORT>)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        944,
+        464
+      ],
+      "id": "bf0d2ff5-91d9-429d-a488-0c98ce7db522",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "update_id"
+            },
+            {
+              "fieldToAggregate": "message"
+            },
+            {
+              "fieldToAggregate": "id"
+            },
+            {
+              "fieldToAggregate": "block_number"
+            },
+            {
+              "fieldToAggregate": "status"
+            },
+            {
+              "fieldToAggregate": "status_history"
+            },
+            {
+              "fieldToAggregate": "remaining_time_seconds"
+            },
+            {
+              "fieldToAggregate": "telegram_message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        464
+      ],
+      "id": "51ea5348-b3dd-4475-b3c6-83879c851033",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5960fc02-afd0-4215-83ab-38fb94d91450",
+              "leftValue": "={{ $json.hasField(\"error\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1280,
+        464
+      ],
+      "id": "072e085d-5df6-49a2-bf60-ff8f21dd12a0",
+      "name": "Valid status?1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message[0].chat.id }}",
+        "text": "={{ $json.id[0] }} successfully updated to: {{ $json.status[0] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        448
+      ],
+      "id": "57fe9da8-106a-4189-a883-a69be359d747",
+      "name": "Confirmation message (report)",
+      "webhookId": "5c28329a-2650-4b2a-9126-78063b55cbb1",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=Thank you for reporting on {{ $json.message.text.slice($json.message.text.indexOf(\" \") + 1) }}! Please select a status to report:",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text }} available",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text }} paidFor",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text }} inUse",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text }} pendingUnload",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.message.text }} outOfOrder",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {
+          "one_time_keyboard": true
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        560
+      ],
+      "id": "8c83a3a0-2896-4091-a2a0-2758d2ab9e11",
+      "name": "Select status to report",
+      "webhookId": "b0257e18-4f8b-457f-abb7-9776adb0a767",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8",
+          "mode": "list",
+          "cachedResultName": "SUTD Laundry Bot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        256
+      ],
+      "id": "c3ef546e-63db-4685-a27c-44f6a38c751c",
+      "name": "Get row(s) in sheet",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "baq6JN98feIF8Ow0",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        992,
+        160
+      ],
+      "id": "9b15fc29-d67b-43c1-b228-c90cafc6f17f",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message"
+            },
+            {
+              "fieldToAggregate": "Machines"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        160
+      ],
+      "id": "1c951ddb-e3d9-4f31-abe4-8f41b938bea8",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d6f8b5c4-b4a4-489d-ad89-1cbe3b328bac",
+              "leftValue": "={{ $json.Machines }}",
+              "rightValue": "={{ $json.message[0].text.slice($json.message[0].text.indexOf(\" \") + 1) }}",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1520,
+        144
+      ],
+      "id": "879a8a37-70c2-4ed1-b1bb-ee26e7ebf1fd",
+      "name": "Already used?",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message[0].chat.id }}",
+        "text": "={{ $json.message[0].text.slice($json.message[0].text.indexOf(\" \") + 1) }} successfully updated to: inUse",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2288,
+        112
+      ],
+      "id": "0e4b9c44-10a5-445a-ad51-fd1cf1b1df36",
+      "name": "Confirmation message (use)",
+      "webhookId": "5c28329a-2650-4b2a-9126-78063b55cbb1",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message[0].chat.id }}",
+        "text": "=You're already using {{ $json.message[0].text.slice($json.message[0].text.indexOf(\" \") + 1) }}!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1712,
+        0
+      ],
+      "id": "985cb3b7-d297-4685-8bcf-c393362af490",
+      "name": "Already in use!",
+      "webhookId": "4cc06370-7f1d-4fdc-95ac-57f4b4d3541f",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message[0].chat.id }}",
+        "text": "Sorry, an error occurred. Please try again later.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2128,
+        560
+      ],
+      "id": "0f2d4ab8-0d53-4b16-98c9-81a8af0ad161",
+      "name": "Error message (Array)",
+      "webhookId": "0b7676d7-433f-46db-9f3c-bf86b5c9a53f",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5960fc02-afd0-4215-83ab-38fb94d91450",
+              "leftValue": "={{ $json.hasField(\"error\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1296,
+        160
+      ],
+      "id": "bbf35eb5-0bb9-417e-9004-9312d7cd507c",
+      "name": "Valid status?3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8",
+          "mode": "list",
+          "cachedResultName": "SUTD Laundry Bot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit#gid=0"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1296,
+        -336
+      ],
+      "id": "dd9937a0-fcd0-4c36-9257-c6a55397e067",
+      "name": "Delete rows or columns from sheet",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "baq6JN98feIF8Ow0",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        992,
+        -208
+      ],
+      "id": "876fa6bc-9430-42cc-bb40-082da5df57e3",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message[0].chat.id }}",
+        "text": "=Finished using {{ $json.Machines[0] }}; status updated!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2064,
+        -256
+      ],
+      "id": "777f63c3-ea65-4378-b0de-2c7419b3aedb",
+      "name": "Confirmation message (finish)",
+      "webhookId": "5c28329a-2650-4b2a-9126-78063b55cbb1",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8",
+          "mode": "list",
+          "cachedResultName": "SUTD Laundry Bot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3-WgGWvICvtqmVVAS8kSE24sbVVoplXJ3geTmWaR-8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        -208
+      ],
+      "id": "ea484132-84e3-4252-9176-2d6cb02d1b64",
+      "name": "Get row(s) in sheet1",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "baq6JN98feIF8Ow0",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "update_id"
+            },
+            {
+              "fieldToAggregate": "row_number"
+            },
+            {
+              "fieldToAggregate": "Machines"
+            },
+            {
+              "fieldToAggregate": "message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        -208
+      ],
+      "id": "787c0b92-665c-4ed2-ba0a-9c9cb46e778f",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1488,
+        -224
+      ],
+      "id": "3fac5215-e8c0-4316-87ee-14eacb254eb5",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "17df65f2-6f38-40e5-9dcd-0bbd27e7bb31",
+              "leftValue": "={{ $json.isEmpty() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        992,
+        -400
+      ],
+      "id": "ae0d628f-b7af-417e-b9d3-3fadd17476cc",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1488,
+        -448
+      ],
+      "id": "c192ae61-9521-47e1-bd09-7d6c497cf832",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message[0].chat.id }}",
+        "text": "No machines currently in use!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1712,
+        -448
+      ],
+      "id": "4fc20e15-b165-4230-a188-de1db64263bd",
+      "name": "Send a text message",
+      "webhookId": "6eb6915c-e2a8-4463-a7d4-48295101778a",
+      "credentials": {
+        "telegramApi": {
+          "id": "EiMNTSstE5GcoCzP",
+          "name": "SUTD Laundry Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://0be7-103-24-77-51.ngrok-free.app/api/machines/{{ $json.Machines[0] }}/status",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "available"
+            },
+            {
+              "name": "user",
+              "value": "={{ $json.message[0].from.username }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1712,
+        -224
+      ],
+      "id": "a653bb47-5018-4ebc-83aa-0bf4d1f3f251",
+      "name": "PUT /api/machines/<machine_id>/status1",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput",
+      "notes": "Remember to get the publicly exposed URL from ngrok (ngrok http <PORT>)"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1904,
+        -256
+      ],
+      "id": "32b7114d-f55b-47f2-a8d5-605a964c638a",
+      "name": "Merge6"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://0be7-103-24-77-51.ngrok-free.app/api/machines/{{ $json.message[0].text.slice($json.message[0].text.indexOf(\" \") + 1) }}/status",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "inUse"
+            },
+            {
+              "name": "user",
+              "value": "={{ $json.message[0].from.username }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1712,
+        160
+      ],
+      "id": "7436932f-7a38-4f9c-a383-11468fc333aa",
+      "name": "PUT /api/machines/<machine_id>/status2",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput",
+      "notes": "Remember to get the publicly exposed URL from ngrok (ngrok http <PORT>)"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2096,
+        112
+      ],
+      "id": "58eadd62-95bc-462a-81a4-f660deafcae8",
+      "name": "Merge7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restrict bot usage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Choose block number",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Choose block number",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Choose block number",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Choose machine",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PUT /api/machines/<machine_id>/status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Default reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose block number": {
+      "main": [
+        []
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "GET /api/machines/<machine_id>",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Select status to report",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid status?": {
+      "main": [
+        [
+          {
+            "node": "Send status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message (Array)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Valid status?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send status": {
+      "main": [
+        []
+      ]
+    },
+    "GET /api/machines/<machine_id>": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT /api/machines/<machine_id>/status": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Valid status?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid status?1": {
+      "main": [
+        [
+          {
+            "node": "Confirmation message (report)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message (Array)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Valid status?3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Already used?": {
+      "main": [
+        [
+          {
+            "node": "Already in use!",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PUT /api/machines/<machine_id>/status2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge7",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Error message (Array)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid status?3": {
+      "main": [
+        [
+          {
+            "node": "Already used?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message (Array)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete rows or columns from sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "PUT /api/machines/<machine_id>/status1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT /api/machines/<machine_id>/status1": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Error message (Array)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge6": {
+      "main": [
+        [
+          {
+            "node": "Confirmation message (finish)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT /api/machines/<machine_id>/status2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge7": {
+      "main": [
+        [
+          {
+            "node": "Confirmation message (use)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0fdcfb7a-07e4-4fc1-be9a-2dc01e6cf813",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d261e2bc97ca6bea8209a5ffbfa208813ec878fb7c6b29544b58ce997a1fc51c"
+  },
+  "id": "M1sMWEr3LMxwhBir",
+  "tags": []
+}
