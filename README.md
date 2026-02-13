@@ -11,6 +11,10 @@
 
 A comprehensive laundry management portal built for SUTD hostel residents to track washer/dryer statuses in blocks 55, 57, and 59 through automated Telegram monitoring and real-time web visualization.
 
+[![Watch Demo](https://img.shields.io/badge/Watch%20Demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=N3V2E66CXXQ)
+
+[![Demo Thumbnail](https://img.youtube.com/vi/N3V2E66CXXQ/0.jpg)](https://www.youtube.com/watch?v=N3V2E66CXXQ)
+
 </div>
 
 ---
