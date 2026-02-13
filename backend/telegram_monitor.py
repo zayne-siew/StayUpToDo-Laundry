@@ -386,7 +386,7 @@ Respond with ONLY the JSON, no other text.
             
             # Step 2: Parse with OpenAI
             parsed = await self.parse_message_with_openai(message.message)
-            if not parsed or 'error' in parsed or not parsed.get('relevant'):
+            if not parsed or 'error' in parsed:
                 logger.info("OpenAI determined message has no actionable status change")
                 return
             
